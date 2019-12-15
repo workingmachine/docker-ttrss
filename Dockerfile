@@ -4,7 +4,6 @@ RUN set -ex; \
     apt-get update -y -q; \
     apt-get install -y -q --no-install-recommends \
         git \
-        busybox-static \
         supervisor \
     ; \
     rm -rf /var/lib/apt/lists/*
