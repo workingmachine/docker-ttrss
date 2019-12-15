@@ -60,6 +60,9 @@ RUN set -ex; \
 # use the default production configuration
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 
+# set php symbolic link
+RUN ln -s /usr/local/bin/php /usr/bin/php
+
 # enable apache modules and configuration
 RUN set -ex; \
     \
@@ -69,12 +72,22 @@ RUN set -ex; \
     \
     a2enmod headers; \
     touch /etc/apache2/conf-available/headers.conf; \
-    a2enconf headers
+    a2enconf headers; \
+    \
+    touch /etc/apache2/conf-available/securing-objects.conf; \
+    a2enconf securing-objects
 
+# supervisord configuration
 RUN mkdir -p \
     /var/log/supervisord \
     /var/run/supervisord
-
 COPY supervisord.conf /etc/supervisor/supervisord.conf
+
+# ttrss feed update daemon script
+#COPY feed-update.sh /feed-update.sh
+#RUN set -ex; \
+#    \
+#    chown www-data:www-data /feed-update.sh; \
+#    chmod 744 /feed-update.sh
 
 CMD ["/usr/bin/supervisord"]
