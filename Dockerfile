@@ -1,4 +1,4 @@
-FROM php:7.3-apache
+FROM php:7.4-apache
 RUN set -ex; \
     \
     apt-get update -y -q; \
@@ -25,10 +25,9 @@ RUN set -ex; \
     rm -rf /var/lib/apt/lists/*; \
     \
     docker-php-ext-configure gd \
-    --with-freetype-dir=/usr \
-    --with-png-dir=/usr \
-    --with-jpeg-dir=/usr \
-    --with-webp-dir=/usr \
+    --with-freetype \
+    --with-jpeg \
+    --with-webp \
     ; \
     \
     docker-php-ext-install -j "$(nproc)" \
