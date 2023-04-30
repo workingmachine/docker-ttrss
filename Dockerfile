@@ -76,11 +76,17 @@ RUN set -ex; \
     touch /etc/apache2/conf-available/securing-objects.conf; \
     a2enconf securing-objects
 
+# set timezone
+ENV TZ=Europe/Vienna
+RUN set -ex; \
+    ln --symbolic --no-dereference --force /usr/share/zoneinfo/$TZ /etc/localtime; \
+    echo $TZ > /etc/timezone
+
 # supervisord configuration
-RUN mkdir -p \
-    /var/log/supervisord \
-    /var/run/supervisord
-COPY supervisord.conf /etc/supervisor/supervisord.conf
+RUN set -ex; \
+    mkdir --parents /var/log/supervisord /var/run/supervisord
+
+COPY supervisord.conf /
 
 # ttrss feed update daemon script
 #COPY feed-update.sh /feed-update.sh
@@ -89,4 +95,14 @@ COPY supervisord.conf /etc/supervisor/supervisord.conf
 #    chown www-data:www-data /feed-update.sh; \
 #    chmod 744 /feed-update.sh
 
-CMD ["/usr/bin/supervisord"]
+# create user foo
+RUN set -ex; \
+    useradd --no-create-home --shell /usr/sbin/nologin --uid 8004 foo; \
+    usermod --home /nonexistent foo
+
+# Avoid permission error later. This is likely suboptimal but it seems to work.
+# The error is: PermissionError: [Errno 13] Permission denied: '/var/log/supervisord/supervisord.log'
+RUN set -ex; \
+    chown --recursive 8004:8004 /var/log/supervisord /var/run/supervisord
+
+CMD ["/usr/bin/supervisord", "-c", "/supervisord.conf"]
