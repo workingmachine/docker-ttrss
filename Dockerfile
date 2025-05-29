@@ -1,4 +1,4 @@
-FROM php:8.2-apache
+FROM php:8.3-apache
 
 RUN set -ex; \
     \
@@ -38,7 +38,6 @@ RUN set -ex; \
         opcache \
         pcntl \
         mysqli \
-        pdo_mysql \
         pdo_pgsql \
     ; \
     \
