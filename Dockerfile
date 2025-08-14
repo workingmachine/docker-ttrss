@@ -23,7 +23,9 @@ RUN set -ex; \
         libwebp-dev \
         libxml2-dev \
         libpq-dev \
+        libicu-dev \
     ; \
+    \
     rm -rf /var/lib/apt/lists/*; \
     \
     docker-php-ext-configure gd \
@@ -41,7 +43,7 @@ RUN set -ex; \
         pdo_pgsql \
     ; \
     \
-# reset apt-mark's "manual" list so that "purge --auto-remove" will remove all build dependencies
+    # reset apt-mark's "manual" list so that "purge --auto-remove" will remove all build dependencies
     apt-mark auto '.*' > /dev/null; \
     apt-mark manual $savedAptMark; \
     ldd "$(php -r 'echo ini_get("extension_dir");')"/*.so \
@@ -50,7 +52,8 @@ RUN set -ex; \
         | xargs -r dpkg-query --search \
         | cut -d: -f1 \
         | sort -u \
-        | xargs -rt apt-mark manual; \
+        | xargs -rt apt-mark manual \
+    ; \
     \
     apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false; \
     rm -rf /var/lib/apt/lists/*
