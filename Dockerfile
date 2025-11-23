@@ -78,7 +78,10 @@ RUN set -ex; \
     a2enconf headers; \
     \
     touch /etc/apache2/conf-available/securing-objects.conf; \
-    a2enconf securing-objects
+    a2enconf securing-objects; \
+    \
+    touch /etc/apache2/conf-available/authorization-fix.conf; \
+    a2enconf authorization-fix
 
 # set timezone
 ENV TZ=Europe/Vienna
