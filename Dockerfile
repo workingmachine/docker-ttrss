@@ -1,4 +1,4 @@
-FROM php:8.3-apache
+FROM php:8.5-apache
 
 RUN set -ex; \
     \
@@ -24,6 +24,7 @@ RUN set -ex; \
         libxml2-dev \
         libpq-dev \
         libicu-dev \
+        libzip-dev \
     ; \
     \
     rm -rf /var/lib/apt/lists/*; \
@@ -37,10 +38,9 @@ RUN set -ex; \
     docker-php-ext-install -j "$(nproc)" \
         gd \
         intl \
-        opcache \
         pcntl \
-        mysqli \
         pdo_pgsql \
+        zip \
     ; \
     \
     # reset apt-mark's "manual" list so that "purge --auto-remove" will remove all build dependencies
